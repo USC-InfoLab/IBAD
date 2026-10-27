@@ -1,0 +1,41 @@
+# Stay-point extraction (ExtractStayPoints.py)
+raw_path: data/raw/Geolife Trajectories 1.3/Data
+staypoints_tsv: data/interim/geolife/staypoints.tsv
+bbox: # Following https://github.com/onspatial/geolife-outlier-dataset/tree/main
+  min_lat: 39.75
+  max_lat: 40.08
+  min_lon: 116.06
+  max_lon: 116.72
+dist_threshold_m: 200        # minimum displacement that ends a stay
+time_threshold_min: 30.0     # minimum dwell time to count as a stay
+gap_threshold_min: 720 #12*60.0, 12 hours
+min_records_per_user: 100
+min_staypoints_per_user: 50
+
+# OSM enrichment (GetOsmData_sqlite, GetOsmNeighbors)
+osm_db: data/interim/osm/osm_cache.sqlite
+round_decimals: 4            # centroid precision; ~11 m at Beijing's latitude
+top_k_neighbors: 3           # POIs kept per centroid
+radius_primary_m: 100        # Overpass search radius
+radius_fallback_m: 500       # widened radius for sparse areas if nothing was found from radius_primary_m.
+
+# External API knobs (Nominatim + Overpass, shared by fetch_osm_*)
+user_agent: geolife-outlier-research/1.0 (research)
+osm_min_interval_s: 1.05   # Nominatim and Overpass TOS: ≤ 1 req/s
+osm_max_retries: 5
+osm_timeout_s: 30
+
+# LLM labeling (LabelWithLLM)
+labeled_tsv: data/interim/geolife/geolife_nhts_llm_labeled.tsv
+llm_cache_db: data/interim/osm/nhts_llm_cache.sqlite
+top_k_frequent: 5
+max_workers: 20
+gcp_project: null        # Vertex AI only: your GCP project, or set GOOGLE_CLOUD_PROJECT
+gcp_location: us-central1
+llm_model: gemini-2.5-flash
+
+# Split (SplitTrainValTest)
+processed_dir: data/processed/geolife
+min_records_split: 50
+train_frac: 0.8
+val_frac: 0.1

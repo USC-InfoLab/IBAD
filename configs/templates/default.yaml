@@ -1,0 +1,46 @@
+# Template discovery (module 1) — LDA soft clustering of daily activity patterns.
+#
+# One document = one agent-day, encoded as a slot-major one-hot vector over
+# (time slot, activity) pairs. Each LDA topic is a behavioural template, and
+# each day's topic mixture (theta) is its soft template membership.
+
+seed: 42
+n_slots: 96        # 15-minute slots per day (24h x 4)
+slot_minutes: 15
+
+output_dir: output/template_discovery   # figures + k-sweep tables
+artifacts_dir: artifacts/templates      # fitted models + per-day mixtures
+
+# sklearn LatentDirichletAllocation.
+# max_iter=3 keeps the 13-point k-sweep tractable on the 213k-document NHTS
+# matrix; raise it for a final publication-quality fit.
+lda:
+  max_iter: 3
+  batch_size: 4096
+
+# Perplexity elbow sweep, inclusive on both ends.
+k_sweep:
+  k_min: 3
+  k_max: 15
+
+datasets:
+  nhts:
+    raw_dir: data/raw/nhts_2017
+    k: 6
+    # Keep code-97/-7/-8/-9 trips as an 'Other' activity instead of dropping them.
+    keep_other: true
+
+  numosim:
+    raw_dir: data/raw/numosim
+    k: 6
+    osf_project: sjyfr
+    train_start: 2024-01-01
+    train_end: 2024-01-28
+    # Fit LDA on a subsample; all documents are still encoded through the fitted model.
+    subsample: 200000
+
+  geolife:
+    processed_dir: data/processed/geolife
+    split: train
+    k: 6
+    batch_size: 64   # only a few thousand documents; the global 4096 would be a single batch

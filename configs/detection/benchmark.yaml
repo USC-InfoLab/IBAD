@@ -1,0 +1,55 @@
+# Module 2 — the evaluation setup every detector shares.
+#
+# IBAD and every baseline read the cohort, the splits and the anomaly benchmark
+# from this one file, so a comparison between methods is a comparison on
+# identical days. Method hyper-parameters live elsewhere:
+# configs/models/ibad.yaml for IBAD, configs/baselines/*.yaml for the rest.
+#
+# Both datasets use the splice benchmark: one test day per agent is overwritten
+# with another day's behaviour (src/evaluation/benchmark.py).
+
+# Fixes the cohort (which NUMOSIM agents are kept). Replicates vary the model and
+# the splices through their own seeds, never the cohort.
+seed: 42
+replicate_seeds: [42, 43, 44, 45, 46]
+
+templates_dir: artifacts/templates      # module 1 output, read not written
+artifacts_dir: artifacts/detection      # fitted detectors: <dataset>_<method>_seed<N>.*
+output_dir: output/detection            # per-run metrics and the replicate table
+
+# Per-day visit cap, as a percentile of observed visits per day (100 keeps all).
+visit_percentile: 100.0
+
+datasets:
+  geolife:
+    processed_dir: data/processed/geolife
+    utc_offset_hours: 8    # timestamps are Beijing time
+    # Each agent's days, split chronologically.
+    train_frac: 0.8
+    val_frac: 0.1
+    splice:
+      # Minimum Jensen-Shannon divergence (nats) between the donor's and the
+      # target's template mixtures for a splice to count as a genuine
+      # behavioural shift. It sets how hard the benchmark is.
+      min_shift: 0.05
+      agent_frac: 1.0      # share of agents that receive a spliced day
+      # Donor days come from train + val: the test window is only a few days
+      # per agent, too few to feed the divergence guard.
+      donors: outside_test
+
+  # NUMOSIM: every agent, detectors fitted on the
+  # four-week train window with no validation split, and the four-week test
+  # window scored as a sequence of its own, each agent's standardisation fitted
+  # on its train-window scores (src/detection/data.py).
+  numosim:
+    raw_dir: data/raw/numosim
+    osf_project: sjyfr
+    utc_offset_hours: -8   # the timestamps' own offset
+    val_frac: 0.0
+    # Agents kept: null keeps all 200k; a number draws a uniform random sample
+    # with `seed` above, for quicker runs.
+    n_agents: null
+    splice:
+      min_shift: 0.05
+      agent_frac: 1.0
+      donors: same_window  # donor days come from the test window itself

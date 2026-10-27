@@ -1,0 +1,24 @@
+# Experiment — effect of the dissimilarity threshold ε on the splice benchmark.
+#
+# ε is the splice guard `min_shift`: a donor day may overwrite a target day only
+# when their template mixtures differ by at least ε (Jensen-Shannon, nats). It
+# is a property of the benchmark, not of any model, so every ε is scored with the
+# same fitted detectors — the ones the main replicate runs saved.
+
+datasets: [geolife, numosim]
+methods: [ibad, histmean, ghmm, iforest, ocsvm, deepsvdd, bestad, tod4traj, icad, trajgen]
+epsilons: [0.0, 0.05, 0.1, 0.25]
+policies: [inter, intra, combined]
+
+output_dir: output/experiments/threshold
+
+# The paper figure: AUROC | AP against ε, one row per dataset (top to bottom),
+# each row with its own methods in label order. A method without results is
+# left out of its row, with a note.
+figure:
+  policy: combined
+  methods:
+    numosim: [ibad, trajgen, icad, bestad, histmean]
+    geolife: [ibad, histmean, trajgen, tod4traj, iforest]
+  row_height: 1.2      # inches per dataset row
+  share_y: false       # each row on its own y scale

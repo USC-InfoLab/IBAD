@@ -1,0 +1,36 @@
+[project]
+name = "ibad"
+version = "0.1.0"
+description = "IBAD — Interpretable Behavioral Anomaly Detection"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "trackintel",
+    "pandas",
+    "requests",
+    "pyyaml",
+    "google-genai",
+    "scikit-learn",
+    "matplotlib",
+    "pyarrow",
+]
+
+[project.optional-dependencies]
+# Vertex AI + GCS batch labelling mode only.
+vertex = [
+    "google-cloud-storage",
+]
+# Running notebooks/ locally.
+notebook = [
+    "ipykernel",
+]
+# Module 2 (anomaly detection). Heavy: pulls the CUDA runtime on Linux.
+detection = [
+    "hmmlearn>=0.3.3",
+    "torch",
+]
+
+[tool.uv]
+# `src` is imported via `python -m src...` from the repo root, not installed
+# as a distribution, so treat this as a virtual project (deps only, no build).
+package = false

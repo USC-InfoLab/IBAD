@@ -1,0 +1,17 @@
+# Experiment — transferability of behavioural templates across datasets.
+#
+# Templates are fitted on `source` (module 1) and applied, without refitting, to
+# `target`. Alignment compares them with the target's own templates; utility
+# trains IBAD on the target with the source's templates and compares it with
+# IBAD on the target's own, on identical splices.
+
+source: nhts
+target: geolife
+method: ibad
+
+alignment:
+  n_permutations: 1000     # null draws for the matched-similarity test
+  seed: 0                  # the null's seed
+
+output_dir: output/experiments/transfer
+artifacts_dir: artifacts/experiments/transfer   # IBAD fitted on the transferred templates

@@ -1,0 +1,51 @@
+# IBAD — the hierarchical behavioural forecaster (module 2).
+#
+# IBAD predicts each day's template mixture from the days before it; a day
+# scores anomalous when the observed mixture diverges from the forecast. The
+# cohort and benchmark it is evaluated on are in configs/detection/benchmark.yaml.
+# Dataset blocks override the shared defaults.
+
+# Time inputs (see src/training/dataset.py): visit times as Unix seconds, each
+# visit's wall clock read in `stamp_zone`; day positions in days between local
+# midnights of `day_zone`.
+inputs:
+  day_zone: America/Los_Angeles
+  stamp_zone: UTC          # Geolife's timestamps carry no zone and were read as UTC
+
+model:
+  d_embed: 32
+  d_visit: 64
+  d_model: 128
+  n_heads: 8
+  n_layers: 6
+  n_visit_layers: 4
+  n_visit_heads: 4
+  dropout: 0.2
+
+training:
+  epochs: 100
+  batch_size: 32
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  early_stop: true
+  patience: 50
+
+datasets:
+  geolife:
+    # ~5.7k agent-days: a smaller net and a longer schedule.
+    model:
+      d_embed: 16
+      d_visit: 32
+      d_model: 64
+      n_layers: 4
+    training:
+      epochs: 300
+      batch_size: 32
+
+  numosim:
+    inputs:
+      stamp_zone: America/Los_Angeles   # NUMOSIM's timestamps carry their UTC-08:00 offset
+    # 200k agents, no validation split: the last of the 50 epochs is kept.
+    training:
+      epochs: 50
+      batch_size: 4096

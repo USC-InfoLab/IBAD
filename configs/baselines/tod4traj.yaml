@@ -1,0 +1,28 @@
+# TOD4Traj baseline: a contrastive transformer embeds each day's activities, and
+# a day scores by its cosine distance from the agent's prototype for that
+# weekday. Dataset blocks override the defaults.
+
+inputs:
+  utc_days: false        # cut days at UTC rather than local midnight
+
+model:
+  input_dim: 64
+  hidden_dim: 64
+  output_dim: 64
+  num_layers: 4
+  nhead: 4
+
+training:
+  epochs: 100
+  batch_size: 512        # agents per batch, capped at the cohort size
+  lr: 3.0e-4
+  lr_step: 50            # StepLR: multiply the rate by lr_gamma every lr_step epochs
+  lr_gamma: 0.9
+
+scoring:
+  batch_size: 256        # agents per inference batch
+
+datasets:
+  numosim:
+    inputs:
+      utc_days: true

@@ -1,0 +1,55 @@
+# Data (don't commit datasets); the code creates these folders when it writes.
+# Leading slashes anchor them to the repo root, so configs/data/ and src/data/
+# are not caught.
+/data/
+
+# Artifacts (model weights, checkpoints, scalers)
+/artifacts/
+
+# Outputs (reports, figures, logs)
+/output/
+
+# uv / virtual environment
+.venv/
+venv/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.Python
+*.so
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+
+# Mac
+.DS_Store
+
+# Claude
+.claude/*
+CLAUDE.md

@@ -1,0 +1,20 @@
+# TrajGenAgent baseline: an LLM generates a normal activity chain for each
+# agent-day from the agent's own train days, and a day scores by the normalised
+# edit distance between its observed chain and the generated one.
+#
+# Generation is a separate, GPU-heavy step (scripts/baselines/generate_trajgen_chains.py,
+# run in an environment with vLLM); this config only says where its output lives.
+
+chains:
+  dir: artifacts/trajgen             # <dataset>/{prompts,chains}_{train,val,test}.jsonl
+
+prompt:
+  history_examples: 4                # example chains quoted from the agent's history
+  seed: 42
+
+generation:
+  model: Qwen/Qwen2.5-32B-Instruct
+  temperature: 0.9
+  top_p: 0.95
+  max_tokens: 512
+  seed: 42

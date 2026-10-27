@@ -1,0 +1,29 @@
+# BeSTAD baseline: an SJCAE clustering autoencoder assigns every day a learned
+# behavioural template, and a day scores by how far its template departs from
+# the agent's normal template profile. Dataset blocks override the defaults.
+
+features:
+  n_slots: 96            # time-of-day resolution of a stay's start (15 minutes)
+
+model:
+  n_clusters: 6          # learned templates, matching module 1's K
+  lstm_dim: 48
+  hidden_dim: 32
+  dropout: 0.2
+
+training:
+  epochs: 40
+  batch_size: 128
+  lr: 1.0e-3
+  weight_decay: 1.0e-3
+  max_days: null         # train days sampled for the fit (null = all)
+
+profile:
+  alpha: 0.02            # Laplace smoothing of each agent's template profile
+
+datasets:
+  numosim:
+    training:
+      epochs: 20
+      batch_size: 512
+      max_days: 120000

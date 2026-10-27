@@ -1,0 +1,35 @@
+# θ-space baselines: generic anomaly detectors fed each day's template mixture.
+#
+# They see a K-dimensional mixture per agent-day and nothing else — no visits,
+# no times, no places — so they measure how much of IBAD's signal is already in
+# the mixtures themselves. Each section configures one method; dataset blocks
+# override the shared defaults.
+
+fit:
+  # Whole agents sampled for fitting (null = every agent). Sampling agents, not
+  # loose days, keeps each agent's days contiguous for GHMM. HistMean fits nothing.
+  max_agents: null
+
+ghmm:
+  n_iter: 100
+  tol: 1.0e-4
+
+iforest:
+  n_estimators: 200
+
+ocsvm:
+  nu: 0.05
+  n_jobs: 16          # processes scoring days in parallel
+
+deepsvdd:
+  hidden: 64
+  repr_dim: 16
+  epochs: 100
+  batch_size: 2048
+  lr: 1.0e-3
+
+datasets:
+  numosim:
+    fit:
+      # OCSVM is quadratic in the number of fitted days.
+      max_agents: 5000

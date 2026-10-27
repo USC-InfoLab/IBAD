@@ -1,0 +1,35 @@
+# ICAD baseline: an autoregressive transformer predicts every visit from the
+# agent's visit history; a day scores by the mean anomaly score of its visits.
+# Dataset blocks override the defaults.
+
+inputs:
+  utc_days: false        # group visits into UTC days rather than local ones
+
+model:
+  d_embed: 32
+  num_heads: 2
+  num_layers: 4
+  num_gaussians: 3
+  d_feedforward: 32
+
+training:
+  epochs: 300
+  batch_size: 32         # agents per batch
+  lr: 1.0e-2             # Adafactor
+  grad_clip: 1.0
+
+scoring:
+  batch_size: 32         # agents per inference batch
+  # Per-visit score: the reference's three-way split, activity in the region's
+  # place. `travel` is the gap since the previous stay ended.
+  weights: {activity: 0.30, travel: 0.45, departure: 0.25}
+
+datasets:
+  geolife:
+    inputs:
+      utc_days: true
+  numosim:
+    training:
+      batch_size: 512
+    scoring:
+      batch_size: 128
